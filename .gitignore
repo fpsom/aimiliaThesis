@@ -34,3 +34,9 @@ vignettes/*.pdf
 
 # Shiny token, see https://shiny.rstudio.com/articles/shinyapps.html
 rsconnect/
+.Rproj.user
+
+# Added by fpsom
+aimiliaThesis.Rproj
+data/E-MTAB-4222.csv
+data/iwgsc_refseqv1.0_HighConf_2017Mar13.gff3
