@@ -1,0 +1,70 @@
+
+library(tidyverse)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(limma)
+library(DESeq2)
+library(stats)
+library(MASS)
+
+E_MTAB_4222 <- read.csv("data/E-MTAB-4222.csv") #upload data
+pdata<-E_MTAB_4222 #name the table ?????
+dim(pdata) #length of row names
+str(pdata) #display the internal structure
+head(pdata) #returns the first parts of the table
+tail(pdata) #returns the last parts of the table
+summary(pdata) #summary of data
+names(pdata) #names of rows of the table
+mydata <- pdata[c(10,13,15,17,19,21,23,25,27,29,31,33,35,37,39,41,43,45,47,49,51,53,55,57,59,61,63,65,67,69,71,
+                  73,75,77,79,81,83,85,87,89,91,93,95,97,99,101,103,105,107,109,111,113,115,117,119,121,123,125,
+                  127,129,131,133,135,137,139,141,143,145,147,149,151,153,155)] #create the subset
+mydata
+summary(mydata)
+dim(mydata)#length of row names
+names(mydata)
+
+###DISTRIBUTION###
+
+histdata <- pdata[c(13,15,17,19,21,23,25,27,29,31,33,35,37,39,41,43,45,47,49,51,53,55,57,59,61,63,65,67,69,71,
+                    73,75,77,79,81,83,85,87,89,91,93,95,97,99,101,103,105,107,109,111,113,115,117,119,121,123,125,
+                    127,129,131,133,135,137,139,141,143,145,147,149,151,153,155)] #choose the variabe to visualize the distribution
+
+names(histdata)##data only numerical variables
+
+hist(log10(histdata))
+
+
+
+###CLUSTERRING###
+
+###Does not work "Error: cannot allocate vector of size 7.9 Gb"###
+
+clusters <- hclust(dist(histdata))
+plot(clusters) #Hierarhical Clustering
+clusterCut <- cutree(clusters, 3) #To select specific number of clusters from the dendogram created
+
+##########Clustering k means
+fit <- kmeans(table, k)  # k=the number of clusters you want to create 
+
+# Cluster Plot against 1st 2 principal components # vary parameters for most readable graph
+clusplot(table, fit$cluster, color=TRUE, shade=TRUE, labels=2, lines=0)
+# Centroid Plot against 1st 2 discriminant functions
+plotcluster(table, fit$cluster)
+
+###PCA###
+
+pca <- prcomp(histdata)
+summary(pca)# Prints variance summary for all principal components
+biplot(pca)
+
+std_dev <- pca$sdev #compute standard deviation of each principal component
+prop_varex <- pr_var/sum(pr_var) #proportion of variance explained 
+
+plot(prop_varex, xlab = "Principal Component", ylab = "Proportion of Variance Explained",
+     type = "b") #scree plot
+
+plot(cumsum(prop_varex), xlab = "Principal Component", ylab = "Cumulative Proportion of Variance Explained",
+     type = "b") #cumulative scree plot
+
+
